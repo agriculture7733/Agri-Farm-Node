@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AgriNexus">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>AgriNexus Smart Farm</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1f14'/%3E%3Cpath d='M32 52V28M32 36c-10 0-14-7-14-14 9 0 14 4 14 14zm0-6c0-8 5-12 14-12 0 8-4 12-14 12z' fill='none' stroke='%23a3e635' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#06130c;--bg2:#0b1f14;--card:rgba(255,255,255,.06);--bd:rgba(255,255,255,.12);--tx:#f1f7f2;--mu:#93a99a;--ac:#a3e635;--ac2:#65a30d;--bl:#38bdf8;--am:#fbbf24;--rd:#f87171;--ok:#4ade80;--onac:#0b1f14}
+html[data-theme=light]{--bg:#eef3f1;--bg2:#fff;--card:#fff;--bd:rgba(0,0,0,.09);--tx:#14261c;--mu:#5f7266;--ac:#16a34a;--ac2:#15803d;--bl:#0284c7;--am:#d97706;--rd:#dc2626;--ok:#16a34a;--onac:#fff}
+html[data-theme=green]{--bg:#0f3d28;--bg2:#145233;--card:rgba(255,255,255,.1);--bd:rgba(255,255,255,.18);--tx:#fff;--mu:#b7d6c2;--ac:#d9f99d;--ac2:#84cc16}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Malayalam","Malayalam Sangam MN",sans-serif;font-size:15px}
+body{min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom));background:radial-gradient(1200px 500px at 50% -10%,var(--bg2),var(--bg))}
+button{font:inherit;color:inherit;cursor:pointer}
+header.top{position:sticky;top:0;z-index:20;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--bg2);border:1px solid var(--bd);display:grid;place-items:center;flex:none}
+.logo svg{width:24px;height:24px;stroke:var(--ac);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ttl{flex:1;min-width:0}.ttl b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttl small{color:var(--mu);font-size:11px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid var(--bd);background:var(--card)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mu);display:inline-block}
+.chip.on .dot{background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 1.8s infinite}.chip.off{color:var(--rd)}.chip.off .dot{background:var(--rd)}
+@keyframes pulse{70%{box-shadow:0 0 0 7px transparent}}
+main{max-width:1000px;margin:0 auto;padding:14px 14px 0}
+.view{display:none;animation:up .35s ease}.view.on{display:block}@keyframes up{from{opacity:0;transform:translateY(8px)}}
+.banner{padding:12px 14px;border-radius:16px;font-weight:700;margin-bottom:12px;border:1px solid var(--bd);background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.banner.bad{background:color-mix(in srgb,var(--rd) 16%,transparent);color:var(--rd)}.banner.warn{background:color-mix(in srgb,var(--am) 16%,transparent);color:var(--am)}
+.demo{background:var(--am);color:#1a1200;text-align:center;font-weight:800;font-size:12px;padding:5px;display:none}
+body.isdemo .demo{display:block}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.grid.w{grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:14px;backdrop-filter:blur(8px);transition:transform .2s,border-color .2s;margin-bottom:10px}.grid .card{margin:0}
+.card:hover{transform:translateY(-2px);border-color:var(--ac2)}
+.card h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:700}
+.card h2{margin:0 0 6px;font-size:17px}
+.big{font-size:28px;font-weight:800;line-height:1.1}.mu{color:var(--mu)}.sm{font-size:12px;color:var(--mu);margin-top:6px;line-height:1.45}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:800;background:var(--card);border:1px solid var(--bd)}
+.pill.g{background:var(--ac);color:var(--onac);border-color:transparent}.pill.r{background:var(--rd);color:#fff;border-color:transparent}.pill.o{background:var(--am);color:#1a1200;border-color:transparent}.pill.b{background:var(--bl);color:#00202e;border-color:transparent}
+.bar{height:10px;border-radius:9px;background:var(--bd);overflow:hidden;margin-top:8px;position:relative}.bar i{display:block;height:100%;border-radius:9px;background:var(--ac);transition:width .6s}
+.zone{height:14px;border-radius:9px;margin-top:10px;position:relative;background:linear-gradient(90deg,var(--bl),var(--ok) 40%,var(--am) 70%,var(--rd))}
+.zone u{position:absolute;top:-4px;width:3px;height:22px;background:var(--tx);border-radius:2px;transition:left .6s}
+.zone s{position:absolute;top:-2px;width:2px;height:18px;background:var(--tx);opacity:.45}
+.stale .live{opacity:.4;filter:grayscale(.7)}
+.dev{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--bd)}.dev:last-child{border:0}
+.dev .ic{font-size:28px;width:40px;text-align:center}.dev .nm{flex:1;min-width:0}.dev .nm b{display:block}.dev .nm span{font-size:12px;color:var(--mu)}
+.glow{animation:gl 1s infinite}@keyframes gl{50%{opacity:.5;transform:scale(1.15)}}
+.sw{display:flex;border-radius:12px;overflow:hidden;border:1px solid var(--bd)}
+.sw button{border:0;background:transparent;padding:10px 16px;font-weight:800;color:var(--mu)}
+.sw button.on.act{background:var(--ac);color:var(--onac)}.sw button.off.act{background:var(--rd);color:#fff}.sw button:disabled{opacity:.4}
+.cs{font-size:11px;font-weight:800;margin-top:4px;display:block}.cs.p{color:var(--am)}.cs.c{color:var(--ok)}.cs.f{color:var(--rd)}
+.btn{border:1px solid var(--bd);background:var(--card);padding:10px 14px;border-radius:12px;font-weight:700}.btn.pr{background:var(--ac);color:var(--onac);border-color:transparent}.btn.dg{background:var(--rd);color:#fff;border-color:transparent}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row.sp{justify-content:space-between}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.chips button{padding:7px 13px;border-radius:99px;border:1px solid var(--bd);background:var(--card);font-weight:700;font-size:13px}.chips button.on{background:var(--ac);color:var(--onac);border-color:transparent}
+table{width:100%;border-collapse:collapse;font-size:12.5px}td,th{padding:7px 4px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}th{color:var(--mu);font-size:11px;text-transform:uppercase}
+canvas{width:100%;height:180px;display:block}
+nav.bn{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(16px);border-top:1px solid var(--bd)}
+nav.bn div{display:flex;width:100%;max-width:640px}
+nav.bn button{flex:1;border:0;background:none;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:700;color:var(--mu);border-radius:12px}
+nav.bn button span{font-size:21px;transition:transform .25s}nav.bn button.on{color:var(--ac)}nav.bn button.on span{transform:translateY(-2px) scale(1.15)}
+.menu{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.menu button{padding:18px 10px;border-radius:20px;border:1px solid var(--bd);background:var(--card);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:6px}.menu button span{font-size:28px}
+.back{margin-bottom:10px}
+.chat{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto;padding:4px 0}
+.msg{padding:10px 13px;border-radius:16px;max-width:88%;line-height:1.45;white-space:pre-wrap;font-size:14px}.msg.u{align-self:flex-end;background:var(--ac);color:var(--onac)}.msg.a{align-self:flex-start;background:var(--card);border:1px solid var(--bd)}
+input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+label.f{display:block;font-size:12px;color:var(--mu);margin:10px 0 4px;font-weight:700}
+.ring{width:104px;height:104px;flex:none}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;font-weight:700}.flow b{padding:8px 10px;border-radius:12px;border:1px solid var(--bd);background:var(--card)}.flow i{color:var(--ac);font-style:normal}
+details{border-top:1px solid var(--bd);padding:10px 0}details summary{cursor:pointer;font-weight:700}details p{margin:8px 0 0;color:var(--mu);line-height:1.5}
+.tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:7px;background:var(--bd);color:var(--mu);margin-left:6px;vertical-align:middle}
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;text-align:center;background:radial-gradient(800px 500px at 50% 40%,#12361f,#06130c);color:#f1f7f2;transition:opacity .6s}
+#splash.hide{opacity:0;pointer-events:none}#splash .logo{width:92px;height:92px;border-radius:26px;margin:0 auto 16px;animation:gl 2s infinite}#splash .logo svg{width:56px;height:56px;stroke:#a3e635}
+#splash h1{margin:0;font-size:30px;letter-spacing:.02em}#splash p{margin:6px 0 0;color:#93a99a;font-size:13px}
+#printArea{display:none}
+@media print{body>*:not(#printArea){display:none!important}#printArea{display:block;color:#000;background:#fff;padding:20px;font-family:system-ui,sans-serif}#printArea table{font-size:12px}#printArea td,#printArea th{border-color:#ccc}}
+@media(min-width:760px){main{padding:20px 20px 0}.ttl b{font-size:18px}}
+</style>
+</head>
+<body>
+<div id="splash"><div><div class="logo"><svg viewBox="0 0 64 64"><path d="M32 54V28M32 38c-11 0-15-8-15-16 10 0 15 5 15 16zm0-6c0-9 5-13 15-13 0 9-4 13-15 13z"/></svg></div><h1>AgriNexus</h1><p data-t="Smart Monitoring. Intelligent Irrigation. Better Farming.|സ്മാർട്ട് നിരീക്ഷണം. ബുദ്ധിപരമായ ജലസേചനം. മെച്ചപ്പെട്ട കൃഷി.">Smart Monitoring. Intelligent Irrigation. Better Farming.</p></div></div>
+<div class="demo" data-t="DEMO MODE – simulated data, not from the real ESP32|ഡെമോ മോഡ് – ഇത് സിമുലേറ്റഡ് ഡാറ്റയാണ്, യഥാർത്ഥ ESP32 അല്ല">DEMO MODE</div>
+
+<header class="top">
+  <div class="logo"><svg viewBox="0 0 64 64"><path d="M32 54V28M32 38c-11 0-15-8-15-16 10 0 15 5 15 16zm0-6c0-9 5-13 15-13 0 9-4 13-15 13z"/></svg></div>
+  <div class="ttl"><b id="farmName">AgriNexus – Smart Farm</b><small id="lastUp">—</small></div>
+  <span class="chip off" id="conn"><i class="dot"></i><span id="connTx">Offline</span></span>
+</header>
+
+<main id="app">
+<!-- HOME -->
+<section class="view on" id="v-home">
+  <div class="banner" id="banner">…</div>
+  <div class="grid" id="tiles"></div>
+  <div class="card" style="margin-top:10px"><h3><span data-t="Smart advisor|സ്മാർട്ട് ഉപദേശി">Smart advisor</span><span class="tag" data-t="rule-based · from live data|നിയമാധിഷ്ഠിതം · തത്സമയ ഡാറ്റ">rule-based</span></h3><div id="insight"></div></div>
+  <div class="grid w">
+    <div class="card"><h3 data-t="Active faults & alerts|സജീവ തകരാറുകൾ / അലർട്ടുകൾ">Faults</h3><div id="homeFaults"></div></div>
+    <div class="card"><h3 data-t="Today|ഇന്ന്">Today</h3><div id="todayBox"></div></div>
+  </div>
+</section>
+
+<!-- CONTROL -->
+<section class="view" id="v-ctl">
+  <div class="card"><h3 data-t="Device control|ഉപകരണ നിയന്ത്രണം">Device control</h3><div id="ctl"></div>
+    <div class="sm" data-t="Every button sends a command to the ESP32. The app shows CONFIRMED only after the ESP32 reports the new state back.|ഓരോ ബട്ടണും ESP32-ലേക്ക് കമാൻഡ് അയയ്ക്കുന്നു. ESP32 പുതിയ നില തിരിച്ചറിയിച്ചശേഷം മാത്രമേ ആപ്പ് CONFIRMED കാണിക്കൂ.">Every button sends a command…</div></div>
+  <div class="grid w">
+    <div class="card"><h3 data-t="Pump safety|പമ്പ് സുരക്ഷ">Pump safety</h3><div id="pumpSafe"></div></div>
+    <div class="card"><h3 data-t="Manual command log (this phone)|മാനുവൽ കമാൻഡ് ലോഗ് (ഈ ഫോൺ)">Command log</h3><div id="cmdLog"></div></div>
+  </div>
+  <div class="card"><div class="row"><button class="btn" onclick="sendRaw('clear')" data-t="Clear faults|തകരാറുകൾ ക്ലിയർ ചെയ്യുക">Clear faults</button></div></div>
+</section>
+
+<!-- IRRIGATION -->
+<section class="view" id="v-irr">
+  <div class="grid w">
+    <div class="card"><h3 data-t="Soil moisture|മണ്ണിലെ ഈർപ്പം">Soil</h3><div class="row"><svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--bd)" stroke-width="12"/><circle id="ring" cx="50" cy="50" r="40" fill="none" stroke="var(--bl)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 251" transform="rotate(-90 50 50)" style="transition:stroke-dasharray .6s"/><text id="ringTx" x="50" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="currentColor">--</text></svg><div><div class="big" id="soilCond">--</div><div class="sm" id="soilRaw"></div></div></div>
+      <div class="zone"><u id="zU"></u><s id="zOn"></s><s id="zOff"></s></div>
+      <div class="row sp sm"><span data-t="Wet|നനവ്">Wet</span><span data-t="Dry|ഉണക്കം">Dry</span></div></div>
+    <div class="card"><h3 data-t="Pump & mode|പമ്പും മോഡും">Pump</h3><div id="irrPump"></div></div>
+  </div>
+  <div class="card"><h3 data-t="Why is the pump (not) running?|പമ്പ് എന്തുകൊണ്ട് പ്രവർത്തിക്കുന്നു / പ്രവർത്തിക്കുന്നില്ല?">Why</h3><div id="why" style="font-weight:700"></div></div>
+  <div class="grid w">
+    <div class="card"><h3 data-t="Predictive irrigation|പ്രവചന ജലസേചനം">Prediction</h3><div id="pred"></div></div>
+    <div class="card"><h3 data-t="Weather & Rain-Lock|കാലാവസ്ഥയും മഴ-ലോക്കും">Weather</h3><div id="wx"></div></div>
+  </div>
+  <div class="card"><h3 data-t="Smart irrigation rules (from firmware)|സ്മാർട്ട് ജലസേചന നിയമങ്ങൾ (ഫേംവെയറിൽ നിന്ന്)">Rules</h3><div id="rules"></div></div>
+  <div class="card"><h3 data-t="Water usage (estimated)|ജല ഉപയോഗം (കണക്കാക്കിയത്)">Water</h3><div id="water"></div></div>
+</section>
+
+<!-- HISTORY -->
+<section class="view" id="v-his">
+  <div class="chips" id="rangeChips"></div>
+  <div class="row" id="dateRow" style="margin-bottom:10px"><input type="date" id="d1" style="flex:1"><input type="date" id="d2" style="flex:1"><button class="btn pr" onclick="setRange('custom')" data-t="Apply|പ്രയോഗിക്കുക">Apply</button></div>
+  <div class="grid" id="hStats"></div>
+  <div class="grid w" style="margin-top:10px">
+    <div class="card"><h3 data-t="Soil moisture vs time (%)|മണ്ണിലെ ഈർപ്പം (%) – സമയം">Soil</h3><canvas id="c1"></canvas></div>
+    <div class="card"><h3 id="t2">Pump</h3><canvas id="c2"></canvas></div>
+    <div class="card"><h3 data-t="Weekly pump usage (min)|ആഴ്ചതോറുമുള്ള പമ്പ് ഉപയോഗം (മിനിറ്റ്)">Weekly</h3><canvas id="c4"></canvas></div>
+    <div class="card"><h3 id="t3">Motion</h3><canvas id="c3"></canvas></div>
+    <div class="card"><h3 data-t="Rain chance history (%)|മഴ സാധ്യത ചരിത്രം (%)">Rain</h3><canvas id="c5"></canvas></div>
+  </div>
+  <div class="card"><h3 data-t="Pump runs|പമ്പ് റൺ ചരിത്രം">Runs</h3><div id="runs"></div></div>
+  <div class="card"><h3 data-t="Event log|ഇവന്റ് ലോഗ്">Events</h3><div class="chips" id="evChips"></div><div id="ev"></div></div>
+  <div class="card"><div class="row"><button class="btn" onclick="exportCSV('events')">⬇ events.csv</button><button class="btn" onclick="exportCSV('hourly')">⬇ hourly.csv</button><button class="btn pr" onclick="makeReport()">📄 PDF report</button></div></div>
+</section>
+
+<!-- HEALTH -->
+<section class="view" id="v-hl">
+  <div class="grid" id="hTiles"></div>
+  <div class="card" style="margin-top:10px"><h3 data-t="Components|ഘടകങ്ങൾ">Components</h3><div id="hComp"></div></div>
+  <div class="grid w">
+    <div class="card"><h3 data-t="System|സിസ്റ്റം">System</h3><table id="hTbl"></table></div>
+    <div class="card"><h3 data-t="Fault history|തകരാർ ചരിത്രം">Fault history</h3><div id="hFaults"></div></div>
+  </div>
+</section>
+
+<!-- MORE -->
+<section class="view" id="v-more">
+  <div class="menu">
+    <button onclick="go('ai')"><span>🤖</span><b data-t="AI Farm Assistant|AI ഫാം അസിസ്റ്റന്റ്">AI</b></button>
+    <button onclick="go('sec')"><span>🛡️</span><b data-t="Security|സുരക്ഷ">Security</b></button>
+    <button onclick="go('about')"><span>📘</span><b data-t="About project|പ്രോജക്റ്റ് വിവരം">About</b></button>
+    <button onclick="go('set')"><span>⚙️</span><b data-t="Settings|ക്രമീകരണങ്ങൾ">Settings</b></button>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="view" id="v-ai">
+  <button class="btn back" onclick="go('more')">← <span data-t="Back|തിരികെ">Back</span></button>
+  <div class="card"><h2>🤖 <span data-t="AI Farm Assistant|AI ഫാം അസിസ്റ്റന്റ്">AI</span></h2>
+    <div class="sm" id="aiMode"></div>
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="sugg" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:6px"><input id="aiIn" placeholder="…" onkeydown="if(event.key==='Enter')ask()"><button class="btn pr" onclick="ask()">➤</button></div>
+    <div class="sm" data-t="The assistant only explains and advises. It never switches any device by itself – all control stays with you and the ESP32 safety rules.|അസിസ്റ്റന്റ് വിശദീകരിക്കുകയും ഉപദേശിക്കുകയും മാത്രം ചെയ്യുന്നു. ഒരു ഉപകരണവും സ്വയം നിയന്ത്രിക്കില്ല – എല്ലാ നിയന്ത്രണവും നിങ്ങളിലും ESP32 സുരക്ഷാ നിയമങ്ങളിലുമാണ്.">never controls</div></div>
+</section>
+
+<!-- SECURITY -->
+<section class="view" id="v-sec">
+  <button class="btn back" onclick="go('more')">← <span data-t="Back|തിരികെ">Back</span></button>
+  <div class="grid w">
+    <div class="card"><h3 data-t="Motion sensors (PIR)|ചലന സെൻസറുകൾ (PIR)">PIR</h3><div id="secLive"></div></div>
+    <div class="card"><h3 data-t="Smart buzzer deterrent|സ്മാർട്ട് ബസർ ഡിറ്ററന്റ്">Deterrent</h3><div id="secDet"></div></div>
+  </div>
+  <div class="card"><h3 data-t="Security event history|സുരക്ഷാ ഇവന്റ് ചരിത്രം">History</h3><div id="secEv"></div>
+    <div class="sm" data-t="PIR sensors detect motion only. They cannot tell a person from an animal, so the app says “Motion detected”.|PIR സെൻസർ ചലനം മാത്രമേ തിരിച്ചറിയൂ; മനുഷ്യനെയോ മൃഗത്തെയോ വേർതിരിക്കില്ല. അതിനാൽ “ചലനം കണ്ടെത്തി” എന്നാണ് കാണിക്കുന്നത്.">note</div></div>
+</section>
+
+<!-- ABOUT -->
+<section class="view" id="v-about">
+  <button class="btn back" onclick="go('more')">← <span data-t="Back|തിരികെ">Back</span></button>
+  <div class="card"><h2>AgriNexus – Smart Farm</h2><div class="mu" data-t="Smart Agricultural Farm Node v2.1: one ESP32 solving three farm problems – automatic water-saving irrigation, motion-triggered animal deterrence, and a light + fan insect trap.|സ്മാർട്ട് അഗ്രികൾച്ചറൽ ഫാം നോഡ് v2.1: ഒരു ESP32 കൊണ്ട് കർഷകന്റെ മൂന്ന് പ്രശ്നങ്ങൾക്ക് പരിഹാരം – ജലം ലാഭിക്കുന്ന ഓട്ടോമാറ്റിക് ജലസേചനം, ചലനം തിരിച്ചറിഞ്ഞുള്ള മൃഗ-തുരത്തൽ, ലൈറ്റ് + ഫാൻ പ്രാണിക്കെണി.">intro</div></div>
+  <div class="card"><h3 data-t="How it works|പ്രവർത്തനം">Flow</h3><div class="flow"><b>🌱 Sensors</b><i>→</i><b>🧠 ESP32</b><i>→</i><b>🔌 Relays</b><i>→</i><b>💧 Pump/Fan/Light</b></div><div class="flow" style="margin-top:8px"><b>🧠 ESP32</b><i>→</i><b>📶 Wi-Fi</b><i>→</i><b>📱 AgriNexus</b> <b>✈️ Telegram</b></div></div>
+  <div class="card"><h3 data-t="Hardware in this project|ഈ പ്രോജക്റ്റിലെ ഹാർഡ്‌വെയർ">Hardware</h3><table id="hw"></table></div>
+  <div class="card"><h3 data-t="Features explained|ഫീച്ചറുകൾ">Explained</h3><div id="expl"></div></div>
+  <div class="card"><h3 data-t="Future scope (not in current hardware)|ഭാവി വികസനം (ഇപ്പോഴത്തെ ഹാർഡ്‌വെയറിൽ ഇല്ല)">Future</h3><div id="future"></div></div>
+</section>
+
+<!-- SETTINGS -->
+<section class="view" id="v-set">
+  <button class="btn back" onclick="go('more')">← <span data-t="Back|തിരികെ">Back</span></button>
+  <div class="card"><h3 data-t="Appearance|രൂപം">Appearance</h3>
+    <label class="f" data-t="Language|ഭാഷ">Language</label><div class="chips" id="setLang"></div>
+    <label class="f" data-t="Theme|തീം">Theme</label><div class="chips" id="setTheme"></div>
+    <label class="f" data-t="Farm name|ഫാമിന്റെ പേര്">Farm name</label><input id="setFarm"></div>
+  <div class="card"><h3 data-t="Connection|കണക്ഷൻ">Connection</h3>
+    <div class="chips" id="setMode"></div>
+    <label class="f" data-t="ESP32 address (leave empty when this app is opened from the ESP32 itself)|ESP32 വിലാസം (ESP32-ൽ നിന്ന് തന്നെ തുറന്നതാണെങ്കിൽ ഒഴിച്ചിടുക)">ESP32 address</label><input id="setBase" placeholder="http://192.168.1.50">
+    <label class="f" data-t="Pump flow estimate (L/min) – measure with a bucket|പമ്പ് ഫ്ലോ കണക്ക് (L/min) – ബക്കറ്റ് കൊണ്ട് അളക്കുക">Flow</label><input id="setFlow" type="number" step="0.1">
+    <div class="row" style="margin-top:12px"><button class="btn pr" onclick="saveSet()" data-t="Save|സേവ് ചെയ്യുക">Save</button></div></div>
+  <div class="card"><h3 data-t="Control lock (Viewer / Admin)|കൺട്രോൾ ലോക്ക് (Viewer / Admin)">Lock</h3>
+    <div class="sm" data-t="Set a PIN on this phone. With a PIN set, controls ask for it – others who borrow the phone become view-only. (App-level lock only.)|ഈ ഫോണിൽ PIN സജ്ജമാക്കുക. PIN ഉണ്ടെങ്കിൽ കൺട്രോളിന് അത് ചോദിക്കും. (ആപ്പ് തലത്തിലുള്ള ലോക്ക് മാത്രം.)">pin</div>
+    <input id="setPin" type="password" inputmode="numeric" placeholder="PIN" style="margin-top:8px"></div>
+  <div class="card"><h3>AI (optional · Gemini)</h3><div class="sm" data-t="Without a key the assistant works offline with built-in rules. With a free Google AI Studio key it answers any question using your live data. The key stays only on this phone.|കീ ഇല്ലെങ്കിൽ അസിസ്റ്റന്റ് ഇന്റർനെറ്റില്ലാതെ ബിൽറ്റ്-ഇൻ നിയമങ്ങൾ കൊണ്ട് ഉത്തരം നൽകും. സൗജന്യ Google AI Studio കീ ഉണ്ടെങ്കിൽ ഏത് ചോദ്യത്തിനും തത്സമയ ഡാറ്റ ഉപയോഗിച്ച് ഉത്തരം നൽകും. കീ ഈ ഫോണിൽ മാത്രം സൂക്ഷിക്കും.">ai</div>
+    <label class="f">API key</label><input id="setKey" type="password" placeholder="AIza…"><label class="f">Model</label><input id="setModel"></div>
+  <div class="card" id="demoCtl"><h3 data-t="Demo scenarios (demo mode only)|ഡെമോ സാഹചര്യങ്ങൾ (ഡെമോ മോഡിൽ മാത്രം)">Demo</h3><div class="row">
+    <button class="btn" onclick="demoEvt('dry')">🌵 Dry soil</button><button class="btn" onclick="demoEvt('rain')">🌧 Rain-lock</button><button class="btn" onclick="demoEvt('motion')">🐗 Motion</button><button class="btn" onclick="demoEvt('fault')">⚠ Soil fault</button><button class="btn" onclick="demoEvt('reset')">↺ Reset</button></div></div>
+</section>
+</main>
+
+<nav class="bn"><div id="nav"></div></nav>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const cfg={lang:LS.get('lang','en'),theme:LS.get('theme','dark'),farm:LS.get('farm','AgriNexus – Smart Farm'),mode:LS.get('mode',(location.protocol==='http:')?'live':'demo'),base:LS.get('base',''),flow:LS.get('flow',5),pin:LS.get('pin',''),key:LS.get('key',''),model:LS.get('model','gemini-2.5-flash')};
+const ml=()=>cfg.lang==='ml';
+const tr=(e,m)=>ml()?m:e;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const p2=n=>String(n).padStart(2,'0');
+const fmtT=t=>{const d=new Date(t*1000);return d.getDate()+'/'+(d.getMonth()+1)+' '+p2(d.getHours())+':'+p2(d.getMinutes())};
+const up=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'d ':'')+h+'h '+m+'m'};
+function setH(id,h){const e=$(id);if(e&&e._h!==h){e._h=h;e.innerHTML=h}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- state ---------- */
+let S=null,lastOk=0,fails=0,online=false,H=[],EV=[],histAt=0,range='today',viewId='home',pend={},cmdLog=LS.get('cmdlog',[]),unlocked=false,evFilter='ALL';
+const FW={autoMax:600,cool:300,manMax:900,check:300,effect:60,hold:600};
+
+/* ---------- API layer (real ESP32 or demo) ---------- */
+const isDemo=()=>cfg.mode==='demo';
+function baseUrl(){let b=(cfg.base||'').trim();if(b&&!/^https?:\/\//.test(b))b='http://'+b;return b.replace(/\/$/,'')}
+async function api(path){
+  if(isDemo())return demoApi(path);
+  const c=new AbortController(),to=setTimeout(()=>c.abort(),5000);
+  try{const r=await fetch(baseUrl()+path,{cache:'no-store',signal:c.signal});if(!r.ok)throw new Error(r.status);return r}finally{clearTimeout(to)}
+}
+async function poll(){
+  try{const r=await api('/api/status');S=await r.json();lastOk=Date.now();fails=0;online=true}
+  catch(e){fails++;if(fails>=3)online=false}
+  renderAll();
+}
+async function loadHist(force){
+  if(!force&&Date.now()-histAt<60000&&H.length)return;
+  try{
+    const h=await(await api('/api/hist?h=720')).text();
+    H=h.trim().split('\n').filter(x=>x).map(l=>{const a=l.split(',').map(Number);return{t:a[0],soil:a[1],ps:a[2],an:a[3],rain:a[4],temp:a[5],fl:a[6]}});
+    const e=await(await api('/api/events')).text();
+    EV=e.trim().split('\n').filter(x=>x).map(l=>{const i=l.indexOf(','),j=l.indexOf(',',i+1);return{t:+l.slice(0,i),ty:l.slice(i+1,j),m:l.slice(j+1)}}).reverse();
+    histAt=Date.now();
+  }catch(e){}
+  renderHist();renderSec();renderHealth();
+}
+
+/* ---------- commands with Pending / Confirmed / Failed ---------- */
+const DEV={pump:{on:'pumpon',off:'pumpoff',key:'pump'},fan:{on:'fanon',off:'fanoff',key:'fan'},led:{on:'ledon',off:'ledoff',key:'led'},buzzer:{on:'buzzeron',off:'buzzeroff',key:'alarm'},pir:{on:'piron',off:'piroff',key:'pir'}};
+const dname=d=>({pump:tr('Water pump','വാട്ടർ പമ്പ്'),fan:tr('Fan','ഫാൻ'),led:tr('Lights','ലൈറ്റുകൾ'),buzzer:tr('Buzzer','ബസർ'),pir:tr('PIR security','PIR സുരക്ഷ')}[d]);
+function askPin(){if(!cfg.pin||unlocked)return true;const p=prompt(tr('Enter control PIN','കൺട്രോൾ PIN നൽകുക'));if(p===cfg.pin){unlocked=true;setTimeout(()=>unlocked=false,300000);return true}alert(tr('Wrong PIN – view only','PIN തെറ്റാണ് – കാണാൻ മാത്രം'));return false}
+function logCmd(o){cmdLog.unshift(o);cmdLog=cmdLog.slice(0,25);LS.set('cmdlog',cmdLog)}
+async function sendDev(d,on){
+  if(!online||!askPin())return;
+  const D=DEV[d],ent={t:Math.floor(Date.now()/1000),d,on,s:'pending'};logCmd(ent);pend[d]={on,s:'pending'};renderAll();
+  try{await api('/cmd?c='+(on?D.on:D.off));}catch(e){ent.s='failed';pend[d]={on,s:'failed'};LS.set('cmdlog',cmdLog);renderAll();return}
+  let ok=false;
+  for(let i=0;i<8&&!ok;i++){await new Promise(r=>setTimeout(r,800));try{S=await(await api('/api/status')).json();lastOk=Date.now()}catch(e){}ok=(!!S[D.key])===on}
+  ent.s=ok?'confirmed':'failed';pend[d]={on,s:ent.s};LS.set('cmdlog',cmdLog);renderAll();
+  setTimeout(()=>{delete pend[d];renderAll()},6000);
+}
+async function sendRaw(c){if(!online||!askPin())return;try{S=await(await api('/cmd?c='+c)).json()}catch(e){}renderAll()}
+
+/* ---------- derived values ---------- */
+const pctOf=raw=>clamp((S.dry-raw)*100/(S.dry-S.wet),0,100);
+function soilCond(){return S.soil>S.onRaw?'dry':(S.soil<S.offRaw?'wet':'normal')}
+const condTx=c=>({dry:tr('Dry','ഉണങ്ങിയത്'),normal:tr('Normal','സാധാരണം'),wet:tr('Wet','നനഞ്ഞത്')}[c]);
+function wxState(){const w=S.wx;if(!w.ok)return'unavail';if(w.age>10800)return'stale';return'ok'}
+function whyPump(){
+  if(S.pump)return tr('Running: ','പ്രവർത്തിക്കുന്നു: ')+S.pumpReason;
+  if(S.faults.some(f=>/soil|sensor/i.test(f)))return tr('Automatic irrigation stopped safely because of a soil-sensor fault.','സോയിൽ സെൻസർ തകരാർ കാരണം ഓട്ടോമാറ്റിക് ജലസേചനം സുരക്ഷിതമായി നിർത്തി.');
+  if(S.rainLock&&S.soil>S.onRaw)return tr('Soil is Dry, but Automatic Irrigation is Paused because Rain is Expected.','മണ്ണ് ഉണങ്ങിയതാണ്, പക്ഷേ മഴ പ്രതീക്ഷിക്കുന്നതിനാൽ ഓട്ടോമാറ്റിക് ജലസേചനം താൽക്കാലികമായി നിർത്തിയിരിക്കുന്നു.');
+  if(S.rainLock)return tr('Rain-Lock is active – irrigation is paused until the rain risk drops.','മഴ-ലോക്ക് സജീവമാണ് – മഴ സാധ്യത കുറയുന്നതുവരെ ജലസേചനം നിർത്തിവച്ചിരിക്കുന്നു.');
+  if(/manual stop/i.test(S.status))return tr('Automatic irrigation is on hold for 10 minutes after a manual OFF.','മാനുവൽ OFF-ന് ശേഷം 10 മിനിറ്റ് ഓട്ടോമാറ്റിക് ജലസേചനം നിർത്തിവച്ചിരിക്കുന്നു.');
+  if(S.soil<=S.onRaw)return tr('Soil moisture is sufficient – no watering needed.','മണ്ണിൽ ആവശ്യത്തിന് ഈർപ്പമുണ്ട് – നനയ്ക്കേണ്ടതില്ല.');
+  return tr('Last pump event: ','അവസാന പമ്പ് സംഭവം: ')+S.pumpReason;
+}
+function trend(){const r=H.slice(-6);if(r.length<3)return null;const d=r[r.length-1].soil-r[0].soil;return Math.abs(d)<40?'flat':(d>0?'dry':'wet')}
+function insight(){
+  const o=[];const c=soilCond();
+  if(S.faults.length)o.push('⚠ '+tr('Fix active faults first – automatic decisions may be paused: ','ആദ്യം തകരാറുകൾ പരിഹരിക്കുക – ഓട്ടോമാറ്റിക് തീരുമാനങ്ങൾ നിലച്ചിരിക്കാം: ')+S.faults[0]);
+  if(c==='dry'&&S.rainLock)o.push('🌧 '+tr('Soil is dry but rain is likely – waiting saves water. The system will irrigate if the rain does not come.','മണ്ണ് ഉണങ്ങിയെങ്കിലും മഴ സാധ്യതയുണ്ട് – കാത്തിരിക്കുന്നത് വെള്ളം ലാഭിക്കും. മഴ വന്നില്ലെങ്കിൽ സിസ്റ്റം നനയ്ക്കും.'));
+  else if(c==='dry'&&!S.pump)o.push('🌵 '+tr('Soil is dry. Automatic mode will start the pump shortly (if not blocked).','മണ്ണ് ഉണങ്ങിയതാണ്. ഓട്ടോമാറ്റിക് മോഡ് ഉടൻ പമ്പ് ഓണാക്കും.'));
+  if(S.pump)o.push('💧 '+tr('Pump is running – moisture should rise within 5 minutes; otherwise a pump-effect warning appears.','പമ്പ് പ്രവർത്തിക്കുന്നു – 5 മിനിറ്റിനുള്ളിൽ ഈർപ്പം കൂടണം; ഇല്ലെങ്കിൽ മുന്നറിയിപ്പ് വരും.'));
+  if(S.wx.ok&&S.wx.temp>=35)o.push('☀ '+tr('Very hot outside – check soil more often today.','പുറത്ത് വളരെ ചൂടാണ് – ഇന്ന് മണ്ണ് കൂടുതൽ തവണ പരിശോധിക്കുക.'));
+  const tr_=trend();if(tr_==='dry'&&c!=='dry')o.push('📉 '+tr('Soil has been drying over the last hours: ','കഴിഞ്ഞ മണിക്കൂറുകളിൽ മണ്ണ് ഉണങ്ങിക്കൊണ്ടിരിക്കുന്നു: ')+S.pred);
+  if(!o.length)o.push('✅ '+tr('Everything looks healthy. ','എല്ലാം സാധാരണ നിലയിലാണ്. ')+S.pred);
+  return o.map(x=>'<div style="margin:6px 0">'+esc(x)+'</div>').join('');
+}
+
+/* ---------- render ---------- */
+function renderAll(){
+  const stale=!online;document.body.classList.toggle('stale',stale);
+  const conn=$('conn');conn.className='chip '+(online?'on':'off');$('connTx').textContent=online?'ESP32 Online':'ESP32 Offline';
+  $('lastUp').textContent=lastOk?tr('Last updated ','അവസാനം പുതുക്കിയത് ')+new Date(lastOk).toLocaleTimeString():tr('Connecting…','ബന്ധിപ്പിക്കുന്നു…');
+  if(!S){setH('banner','…');return}
+  const bad=S.faults.length>0;
+  $('banner').className='banner'+(!online?' bad':bad?' bad':(S.rainLock?' warn':''));
+  $('banner').textContent=!online?'📴 '+tr('ESP32 is offline – values below are the last known (not live).','ESP32 ഓഫ്‌ലൈൻ ആണ് – താഴെയുള്ളത് അവസാനം ലഭിച്ച വിവരങ്ങളാണ് (തത്സമയമല്ല).'):(bad?'⚠ ':'✅ ')+S.status;
+  const c=soilCond(),wxs=wxState();
+  const tile=(ic,t,v,sub,cls)=>'<div class="card live"><h3>'+ic+' '+t+'</h3><div class="big">'+v+'</div><div class="sm">'+(sub||'')+'</div></div>';
+  setH('tiles',
+    '<div class="card live"><h3>💧 '+tr('Soil moisture','ഈർപ്പം')+'</h3><div class="big">'+S.pct+'%</div><div class="sm">'+condTx(c)+' · raw '+S.soil+'</div><div class="bar"><i style="width:'+S.pct+'%;background:var(--bl)"></i></div></div>'+
+    tile('🚰',tr('Pump','പമ്പ്'),S.pump?'<span style="color:var(--ac)">ON</span>':'OFF',S.pumpMode==='Auto'?tr('Automatic','ഓട്ടോമാറ്റിക്'):tr('Manual','മാനുവൽ'))+
+    tile('🌀',tr('Fan','ഫാൻ'),S.fan?'ON':'OFF','')+tile('💡',tr('Lights','ലൈറ്റുകൾ'),S.led?'ON':'OFF','')+
+    tile('🔔',tr('Buzzer','ബസർ'),S.buzzNow?tr('Sounding','മുഴങ്ങുന്നു'):(S.alarm?tr('Armed','സജ്ജം'):tr('Silenced','നിശബ്ദം')),'')+
+    tile('👁',tr('PIR 1','PIR 1'),S.m1?'<span style="color:var(--rd)">'+tr('Motion','ചലനം')+'</span>':tr('No motion','ചലനമില്ല'),S.pir?'':tr('Security disabled','സുരക്ഷ ഓഫ്'))+
+    tile('👁',tr('PIR 2','PIR 2'),S.m2?'<span style="color:var(--rd)">'+tr('Motion','ചലനം')+'</span>':tr('No motion','ചലനമില്ല'),S.pir?'':tr('Security disabled','സുരക്ഷ ഓഫ്'))+
+    tile('🌦',tr('Weather','കാലാവസ്ഥ'),S.wx.ok?esc(S.wx.cond):tr('Unavailable','ലഭ്യമല്ല'),wxs==='stale'?'⚠ '+tr('Stale data','പഴയ ഡാറ്റ'):(S.wx.ok?S.wx.temp+'°C · '+S.wx.hum+'%':''))+
+    tile('🌧',tr('Rain-Lock','മഴ-ലോക്ക്'),S.rainLock?'<span style="color:var(--am)">'+tr('Active','സജീവം')+'</span>':tr('Inactive','നിഷ്ക്രിയം'),S.wx.ok?tr('Rain 3h','മഴ 3മ')+' '+S.wx.c3+'%':''));
+  setH('insight',insight());
+  setH('homeFaults',S.faults.length?S.faults.map(f=>'<div style="color:var(--rd);font-weight:700;margin:4px 0">⚠ '+esc(f)+'</div>').join(''):'<div style="color:var(--ok);font-weight:700">✅ '+tr('No active faults','സജീവ തകരാറുകളില്ല')+'</div>');
+  setH('todayBox','<div class="row sp"><span>'+tr('Pump runtime','പമ്പ് പ്രവർത്തിച്ചത്')+'</span><b>'+S.today.pumpMin+' min</b></div><div class="row sp" style="margin-top:6px"><span>'+tr('Motion events','ചലന സംഭവങ്ങൾ')+'</span><b>'+S.today.animals+'</b></div><div class="row sp" style="margin-top:6px"><span>'+tr('Last motion','അവസാന ചലനം')+'</span><b>'+esc(S.lastAnimal)+'</b></div>');
+  renderCtl();renderIrr();renderSec();renderHealth();
+}
+function swBtn(d,on,live,sub,ic){
+  const p=pend[d],dis=!online||(p&&p.s==='pending');
+  const cs=p?'<span class="cs '+(p.s==='pending'?'p':p.s==='confirmed'?'c':'f')+'">'+({pending:tr('⏳ Command pending…','⏳ കമാൻഡ് പെൻഡിംഗ്…'),confirmed:tr('✔ Command confirmed','✔ സ്ഥിരീകരിച്ചു'),failed:tr('✖ Command failed','✖ കമാൻഡ് പരാജയപ്പെട്ടു')}[p.s])+'</span>':'';
+  return'<div class="dev"><div class="ic'+(live?' glow':'')+'">'+ic+'</div><div class="nm"><b>'+dname(d)+'</b><span>'+sub+'</span>'+cs+'</div><div class="sw"><button class="on'+(on?' act':'')+'" '+(dis?'disabled ':'')+'onclick="sendDev(\''+d+'\',true)">ON</button><button class="off'+(on?'':' act')+'" '+(dis?'disabled ':'')+'onclick="sendDev(\''+d+'\',false)">OFF</button></div></div>';
+}
+function renderCtl(){
+  if(!S)return;
+  const pm=S.pumpMode==='Auto'?tr('Automatic mode','ഓട്ടോമാറ്റിക് മോഡ്'):tr('Manual mode','മാനുവൽ മോഡ്');
+  let h=swBtn('pump',S.pump,S.pump,pm+(S.pump?' · '+S.pumpRun+' s':'')+' · '+esc(S.pumpReason),'💧');
+  if(!S.pump&&pend.pump&&pend.pump.s==='failed'&&pend.pump.on)h+='<div class="sm" style="color:var(--am)">'+esc(whyPump())+'</div>';
+  h+=swBtn('fan',S.fan,S.fan,tr('Air circulation / insect trap','വായുസഞ്ചാരം / പ്രാണിക്കെണി'),'🌀');
+  h+=swBtn('led',S.led,S.led,tr('Both LEDs share one relay – controlled together','രണ്ട് LED-കളും ഒരേ റിലേയിൽ – ഒരുമിച്ച് നിയന്ത്രിക്കുന്നു'),'💡');
+  h+=swBtn('buzzer',S.alarm,S.buzzNow,S.buzzNow?tr('Sounding now','ഇപ്പോൾ മുഴങ്ങുന്നു'):(S.alarm?tr('Armed – sounds on motion (ON = arm + 5 s beep)','സജ്ജം – ചലനത്തിൽ മുഴങ്ങും (ON = സജ്ജം + 5 സെക്കൻഡ് ബീപ്)'):tr('Silenced (OFF = mute + disable auto alarm)','നിശബ്ദം (OFF = മ്യൂട്ട് + ഓട്ടോ അലാറം ഓഫ്)')),'🔔');
+  h+=swBtn('pir',S.pir,false,S.pir?tr('Watching the field','കൃഷിയിടം നിരീക്ഷിക്കുന്നു'):tr('Disabled','പ്രവർത്തനരഹിതം'),'👁');
+  setH('ctl',h);
+  const lim=S.pumpMode==='Manual'?FW.manMax:FW.autoMax,pc=S.pump?clamp(S.pumpRun*100/lim,0,100):0;
+  setH('pumpSafe','<div class="row sp"><span>'+tr('Run time','പ്രവർത്തന സമയം')+'</span><b>'+(S.pump?S.pumpRun:0)+' s / '+lim+' s</b></div><div class="bar"><i style="width:'+pc+'%;background:'+(pc>80?'var(--rd)':'var(--ac)')+'"></i></div><div class="sm">'+tr('Safety auto-OFF: manual 15 min, automatic 10 min. Cooldown 5 min after a max run. These run inside the ESP32 – even if this app is closed.','സുരക്ഷാ ഓട്ടോ-OFF: മാനുവൽ 15 മിനിറ്റ്, ഓട്ടോ 10 മിനിറ്റ്. പരമാവധി റണ്ണിന് ശേഷം 5 മിനിറ്റ് വിശ്രമം. ഇത് ESP32-ൽ തന്നെ പ്രവർത്തിക്കുന്നു – ആപ്പ് അടച്ചാലും.')+'</div><div class="sm"><b>'+tr('Last stop reason','അവസാന നിർത്തൽ കാരണം')+':</b> '+esc(S.pump?'—':S.pumpReason)+'</div>');
+  setH('cmdLog',cmdLog.length?'<table>'+cmdLog.slice(0,8).map(x=>'<tr><td>'+fmtT(x.t)+'</td><td>'+dname(x.d)+' '+(x.on?'ON':'OFF')+'</td><td class="cs '+(x.s==='confirmed'?'c':x.s==='failed'?'f':'p')+'">'+x.s+'</td></tr>').join('')+'</table>':'<div class="sm">'+tr('No manual commands yet','മാനുവൽ കമാൻഡുകളില്ല')+'</div>');
+}
+function renderIrr(){
+  if(!S)return;
+  const c=soilCond();
+  $('ring').setAttribute('stroke-dasharray',(251*S.pct/100)+' 251');$('ring').setAttribute('stroke',S.pct<30?'var(--rd)':S.pct<50?'var(--am)':'var(--bl)');$('ringTx').textContent=S.pct+'%';
+  $('soilCond').textContent=condTx(c);$('soilRaw').textContent='Raw '+S.soil+' · '+tr('pump ON above','പമ്പ് ON')+' '+S.onRaw+' · '+tr('OFF below','OFF')+' '+S.offRaw;
+  const pz=r=>clamp(100-pctOf(r),0,100);$('zU').style.left='calc('+pz(S.soil)+'% - 1px)';$('zOn').style.left=pz(S.onRaw)+'%';$('zOff').style.left=pz(S.offRaw)+'%';
+  setH('irrPump','<div class="big">'+(S.pump?'💧 ON':'OFF')+'</div><div class="sm">'+(S.pumpMode==='Auto'?tr('Automatic mode','ഓട്ടോമാറ്റിക് മോഡ്'):tr('Manual mode – returns to Automatic after you switch the pump OFF (auto stays paused 10 min)','മാനുവൽ മോഡ് – പമ്പ് OFF ചെയ്ത ശേഷം ഓട്ടോമാറ്റിക്കിലേക്ക് മടങ്ങും (10 മിനിറ്റ് ഓട്ടോ നിർത്തിവയ്ക്കും)'))+'</div>'+(S.pump?'<div class="sm">'+tr('Running for','ഓടിയ സമയം')+' '+S.pumpRun+' s</div>':'')+(S.faults.some(f=>/pump/i.test(f))?'<div class="pill o" style="margin-top:8px">⚠ '+tr('Pump effect warning','പമ്പ് ഫലമില്ലായ്മ മുന്നറിയിപ്പ്')+'</div>':''));
+  setH('why',esc(whyPump()));
+  const t=trend();setH('pred','<div class="big" style="font-size:19px">'+esc(S.pred)+'</div><div class="sm">'+(t==='dry'?'📉 '+tr('Soil moisture decreasing','ഈർപ്പം കുറയുന്നു'):t==='wet'?'📈 '+tr('Soil moisture increasing','ഈർപ്പം കൂടുന്നു'):t?'➖ '+tr('Soil moisture steady','ഈർപ്പം സ്ഥിരം'):'')+'</div><div class="sm">ℹ '+tr('An estimate from the recent drying trend – not an exact forecast.','സമീപകാല ഉണങ്ങൽ പ്രവണതയിൽ നിന്നുള്ള ഏകദേശ കണക്ക് – കൃത്യമായ പ്രവചനമല്ല.')+'</div>');
+  const w=S.wx,ws=wxState();
+  setH('wx',(ws==='ok'?'<div class="big" style="font-size:20px">'+esc(w.cond)+'</div><div class="sm">'+w.temp+'°C · '+w.hum+'% '+tr('(from WeatherAPI, not a farm sensor)','(WeatherAPI നൽകുന്നത്, ഫാം സെൻസറല്ല)')+'</div>':'<div class="pill o">'+(ws==='stale'?tr('Weather data STALE','കാലാവസ്ഥ ഡാറ്റ പഴയത്'):tr('Weather data UNAVAILABLE','കാലാവസ്ഥ ഡാറ്റ ലഭ്യമല്ല'))+'</div>')+
+    '<table style="margin-top:8px"><tr><td>'+tr('Rain probability 3 h','മഴ സാധ്യത 3 മണിക്കൂർ')+'</td><td><b>'+(ws==='ok'?w.c3+'%':'—')+'</b></td></tr><tr><td>'+tr('Rain probability 6 h','മഴ സാധ്യത 6 മണിക്കൂർ')+'</td><td><b>'+(ws==='ok'?w.c6+'%':'—')+'</b></td></tr><tr><td>'+tr('Rain-Lock','മഴ-ലോക്ക്')+'</td><td><b>'+(S.rainLock?tr('Active','സജീവം'):tr('Inactive','നിഷ്ക്രിയം'))+'</b></td></tr><tr><td>'+tr('Weather updated','പുതുക്കിയത്')+'</td><td><b>'+(w.age<0?'—':Math.round(w.age/60)+' min ago')+'</b></td></tr><tr><td>API</td><td><b>'+(ws==='ok'?'OK':ws)+'</b></td></tr></table>');
+  setH('rules','<table><tr><td>'+tr('Start pump when raw >','പമ്പ് ഓൺ: raw >')+'</td><td><b>'+S.onRaw+'</b></td></tr><tr><td>'+tr('Stop pump when raw <','പമ്പ് ഓഫ്: raw <')+'</td><td><b>'+S.offRaw+'</b></td></tr><tr><td>'+tr('Between the two (hysteresis)','രണ്ടിനും ഇടയിൽ (ഹിസ്റ്ററിസിസ്)')+'</td><td><b>'+tr('keeps previous state','മുൻ നില തുടരും')+'</b></td></tr><tr><td>'+tr('Max auto run / cooldown','പരമാവധി ഓട്ടോ റൺ / വിശ്രമം')+'</td><td><b>10 / 5 min</b></td></tr><tr><td>'+tr('Manual safety cut-off','മാനുവൽ സുരക്ഷാ കട്ട്-ഓഫ്')+'</td><td><b>15 min</b></td></tr><tr><td>'+tr('Pump effect check','പമ്പ് ഫലം പരിശോധന')+'</td><td><b>5 min / ≥60 raw</b></td></tr><tr><td>'+tr('Rain-lock when rain chance ≥','മഴ-ലോക്ക് മഴ സാധ്യത ≥')+'</td><td><b>60 %</b></td></tr></table><div class="sm">🔒 '+tr('Thresholds can only be changed in the ESP32 firmware (re-flash) – this prevents unsafe changes from the app.','ത്രെഷോൾഡുകൾ ESP32 ഫേംവെയറിൽ (റീ-ഫ്ലാഷ്) മാത്രമേ മാറ്റാനാകൂ – ആപ്പിൽ നിന്നുള്ള അപകടകരമായ മാറ്റം തടയാൻ.')+'</div>');
+  const tm=S.tot.pumpMin,L=Math.round(tm*cfg.flow);
+  setH('water','<div class="grid"><div><div class="sm">'+tr('Estimated water used (total)','കണക്കാക്കിയ ജല ഉപയോഗം (ആകെ)')+'</div><div class="big">~'+L+' L</div></div><div><div class="sm">'+tr('Estimated water saved (rain-lock)','കണക്കാക്കിയ ജല ലാഭം (മഴ-ലോക്ക്)')+'</div><div class="big" style="color:var(--ok)">~'+S.tot.saved+' L</div></div><div><div class="sm">'+tr('Pump runtime total / today','പമ്പ് ആകെ / ഇന്ന്')+'</div><div class="big">'+tm+' / '+S.today.pumpMin+' min</div></div></div><div class="sm">⚠ '+tr('These are ESTIMATES (runtime × '+cfg.flow+' L/min). There is no water-flow sensor. Measure the real pump flow with a bucket and set it in Settings.','ഇവ കണക്കുകൂട്ടലുകളാണ് (പ്രവർത്തന സമയം × '+cfg.flow+' L/min). വാട്ടർ ഫ്ലോ സെൻസർ ഇല്ല. പമ്പ് ഫ്ലോ ബക്കറ്റ് കൊണ്ട് അളന്ന് ക്രമീകരണത്തിൽ നൽകുക.')+'</div>');
+}
+function compOk(k){return!S.faults.some(f=>new RegExp(k,'i').test(f))}
+function renderHealth(){
+  if(!S)return;
+  const comps=[['📡',tr('ESP32 connection','ESP32 കണക്ഷൻ'),online],['📶','Wi-Fi ('+S.rssi+' dBm)',compOk('wifi')],['🌱',tr('Soil sensor','സോയിൽ സെൻസർ'),compOk('soil')],['🚰',tr('Pump','പമ്പ്'),compOk('pump')],['👁','PIR 1',compOk('pir ?1')],['👁','PIR 2',compOk('pir ?2')],['🌦','Weather API',compOk('weather')&&wxState()==='ok'],['🕒',tr('Time sync','സമയ സമന്വയം'),S.ntp&&compOk('time')],['🧠',tr('Memory','മെമ്മറി')+' ('+Math.round(S.heap/1024)+' KB)',S.heap>30000&&compOk('memory')]];
+  setH('hTiles','<div class="card live"><h3>'+tr('Active faults','സജീവ തകരാർ')+'</h3><div class="big" style="color:'+(S.faults.length?'var(--rd)':'var(--ok)')+'">'+S.faults.length+'</div></div><div class="card live"><h3>'+tr('Uptime','പ്രവർത്തന സമയം')+'</h3><div class="big" style="font-size:22px">'+up(S.up)+'</div></div><div class="card"><h3>'+tr('Last communication','അവസാന ആശയവിനിമയം')+'</h3><div class="big" style="font-size:18px">'+(lastOk?new Date(lastOk).toLocaleTimeString():'—')+'</div></div>');
+  setH('hComp',comps.map(c=>'<div class="dev" style="padding:9px 0"><div class="ic" style="font-size:22px">'+c[0]+'</div><div class="nm"><b>'+c[1]+'</b></div><span class="pill '+(c[2]?'g':'r')+'">'+(c[2]?'OK':tr('FAULT','തകരാർ'))+'</span></div>').join(''));
+  const row=(a,b)=>'<tr><td>'+a+'</td><td><b>'+b+'</b></td></tr>';
+  setH('hTbl',row(tr('Firmware','ഫേംവെയർ'),'v'+S.fw)+row('IP',esc(S.ip))+row(tr('Device time','ഉപകരണ സമയം'),esc(S.ts))+row(tr('Internet time','ഇന്റർനെറ്റ് സമയം'),S.ntp?'synced':'NOT synced')+row('Telegram',S.tg?tr('enabled','പ്രവർത്തനക്ഷമം'):tr('not configured','സജ്ജമാക്കിയിട്ടില്ല'))+row(tr('Faults logged (total)','രേഖപ്പെടുത്തിയ തകരാറുകൾ'),S.tot.faults)+row(tr('Rain-lock skips','മഴ-ലോക്ക് ഒഴിവാക്കലുകൾ'),S.tot.blocked));
+  const act=S.faults.map(f=>'<div style="margin:6px 0"><span class="pill r">'+tr('ACTIVE','സജീവം')+'</span> '+esc(f)+'</div>').join('');
+  const hist=EV.filter(e=>e.ty==='FAULT'||e.ty==='OK').slice(0,10).map(e=>'<tr><td>'+fmtT(e.t)+'</td><td><span class="pill '+(e.ty==='OK'?'g':'r')+'">'+(e.ty==='OK'?tr('Resolved','പരിഹരിച്ചു'):tr('Fault','തകരാർ'))+'</span></td><td>'+esc(e.m)+'</td></tr>').join('');
+  setH('hFaults',act+(hist?'<table>'+hist+'</table>':(act?'':'<div class="sm">✅ '+tr('No faults recorded','തകരാറുകളൊന്നും രേഖപ്പെടുത്തിയിട്ടില്ല')+'</div>')));
+}
+function renderSec(){
+  if(!S)return;
+  setH('secLive','<div class="dev"><div class="ic'+(S.m1?' glow':'')+'">👁</div><div class="nm"><b>PIR 1</b></div><span class="pill '+(S.m1?'r':'g')+'">'+(S.m1?tr('Motion','ചലനം'):tr('No motion','ചലനമില്ല'))+'</span></div><div class="dev"><div class="ic'+(S.m2?' glow':'')+'">👁</div><div class="nm"><b>PIR 2</b></div><span class="pill '+(S.m2?'r':'g')+'">'+(S.m2?tr('Motion','ചലനം'):tr('No motion','ചലനമില്ല'))+'</span></div>'+swBtn('pir',S.pir,false,S.pir?tr('Security monitoring enabled','സുരക്ഷാ നിരീക്ഷണം ഓൺ'):tr('Disabled','ഓഫ്'),'🛡')+'<div class="sm">'+tr('Last motion','അവസാന ചലനം')+': <b>'+esc(S.lastAnimal)+'</b> · '+tr('Today','ഇന്ന്')+' '+S.today.animals+' · '+tr('Total','ആകെ')+' '+S.tot.animals+'</div>');
+  setH('secDet',S.det.map((d,i)=>{const p=d.tries?Math.round(d.ok*100/d.tries):0;return'<div style="margin:8px 0"><b>'+(i===S.best?'⭐ ':'')+esc(d.n)+'</b> <span class="sm">'+d.ok+'/'+d.tries+' '+tr('worked','ഫലിച്ചു')+'</span><div class="bar"><i style="width:'+p+'%;background:var(--bl)"></i></div></div>'}).join('')+'<div class="sm">'+tr('The system tries different buzzer patterns and favours the one after which the intruder leaves fastest.','വിവിധ ബസർ പാറ്റേണുകൾ പരീക്ഷിച്ച്, ചലനം വേഗം അവസാനിക്കുന്നതിനെ കൂടുതൽ ഉപയോഗിക്കുന്നു.')+'</div>');
+  setH('secEv',EV.filter(e=>e.ty==='ANIMAL'||e.ty==='DETER'||e.ty==='BUZZER').slice(0,25).map(e=>'<tr><td>'+fmtT(e.t)+'</td><td><b>'+e.ty+'</b></td><td>'+esc(e.m.replace('Motion detected','Motion detected'))+'</td></tr>').join('').replace(/^(.+)$/,'<table>$1</table>')||'<div class="sm">—</div>');
+}
+
+/* ---------- history ---------- */
+const RANGES=[['today','Today','ഇന്ന്'],['7d','Last 7 days','7 ദിവസം'],['30d','Last 30 days','30 ദിവസം'],['custom','Date filter','തീയതി']];
+function rangeCut(){
+  const now=Math.floor(Date.now()/1000);
+  if(range==='today'){const d=new Date();d.setHours(0,0,0,0);return[d/1000,now+3600]}
+  if(range==='7d')return[now-7*86400,now+3600];if(range==='30d')return[now-30*86400,now+3600];
+  const a=$('d1').value?new Date($('d1').value+'T00:00:00')/1000:0,b=$('d2').value?new Date($('d2').value+'T23:59:59')/1000:now+3600;return[a,b];
+}
+function setRange(r){range=r;$('dateRow').style.display=r==='custom'?'flex':'none';renderHist()}
+function inR(t){const[a,b]=rangeCut();return t>=a&&t<=b}
+const EVF=[['ALL','All','എല്ലാം'],['PUMP','Pump','പമ്പ്'],['FAN','Fan','ഫാൻ'],['LIGHT','Lights','ലൈറ്റ്'],['BUZZER','Buzzer','ബസർ'],['ANIMAL','Motion','ചലനം'],['RAIN','Rain-lock','മഴ-ലോക്ക്'],['FAULT','Faults','തകരാർ'],['WIFI','Wi-Fi','Wi-Fi']];
+function renderHist(){
+  setH('rangeChips',RANGES.map(r=>'<button class="'+(range===r[0]?'on':'')+'" onclick="setRange(\''+r[0]+'\')">'+tr(r[1],r[2])+'</button>').join(''));
+  setH('evChips',EVF.map(r=>'<button class="'+(evFilter===r[0]?'on':'')+'" onclick="evFilter=\''+r[0]+'\';renderHist()">'+tr(r[1],r[2])+'</button>').join(''));
+  const h=H.filter(x=>inR(x.t));
+  const perHour=range==='today';
+  const pumpMin=h.reduce((a,x)=>a+x.ps,0)/60,mot=h.reduce((a,x)=>a+x.an,0),rainH=h.filter(x=>x.fl&1).length,flH=h.filter(x=>x.fl&2).length;
+  setH('hStats','<div class="card"><h3>'+tr('Pump runtime','പമ്പ് സമയം')+'</h3><div class="big">'+Math.round(pumpMin)+' min</div></div><div class="card"><h3>'+tr('Est. water used','കണക്കാക്കിയ ജലം')+'</h3><div class="big">~'+Math.round(pumpMin*cfg.flow)+' L</div></div><div class="card"><h3>'+tr('Motion events','ചലന സംഭവങ്ങൾ')+'</h3><div class="big">'+mot+'</div></div><div class="card"><h3>'+tr('Rain-lock hours','മഴ-ലോക്ക് മണിക്കൂർ')+'</h3><div class="big">'+rainH+'</div></div><div class="card"><h3>'+tr('Fault hours','തകരാർ മണിക്കൂർ')+'</h3><div class="big">'+flH+'</div></div>');
+  $('t2').textContent=perHour?tr('Pump runtime per hour (min)','മണിക്കൂറിലെ പമ്പ് സമയം (മിനിറ്റ്)'):tr('Daily pump usage (min)','ദിവസേനയുള്ള പമ്പ് ഉപയോഗം (മിനിറ്റ്)');
+  $('t3').textContent=perHour?tr('Motion per hour','മണിക്കൂറിലെ ചലനം'):tr('Motion detection per day','ദിവസേനയുള്ള ചലനം');
+  const lab=x=>{const d=new Date(x.t*1000);return perHour?p2(d.getHours())+':00':d.getDate()+'/'+(d.getMonth()+1)};
+  const grp=f=>{const D={};h.forEach(x=>{const d=new Date(x.t*1000),k=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();D[k]=D[k]||{t:x.t,v:0};D[k].v+=f(x)});return Object.keys(D).sort().map(k=>({l:new Date(D[k].t*1000).getDate()+'/'+(new Date(D[k].t*1000).getMonth()+1),v:D[k].v}))};
+  requestAnimationFrame(()=>{
+    draw($('c1'),h.map(lab),h.map(x=>pctOf0(x.soil)),'line','--bl',100);
+    if(perHour){draw($('c2'),h.map(lab),h.map(x=>x.ps/60),'bar','--ac');draw($('c3'),h.map(lab),h.map(x=>x.an),'bar','--am')}
+    else{const a=grp(x=>x.ps/60),b=grp(x=>x.an);draw($('c2'),a.map(x=>x.l),a.map(x=>x.v),'bar','--ac');draw($('c3'),b.map(x=>x.l),b.map(x=>x.v),'bar','--am')}
+    const w=[];const all=H.slice();for(let i=all.length;i>0;i-=168){const seg=all.slice(Math.max(0,i-168),i);w.unshift({l:'W'+(w.length+1),v:seg.reduce((a,x)=>a+x.ps,0)/60})}
+    w.forEach((x,i)=>x.l='-'+(w.length-1-i)+'w');draw($('c4'),w.map(x=>x.l),w.map(x=>x.v),'bar','--ac');
+    draw($('c5'),h.map(lab),h.map(x=>x.rain),'line','--bl',100);
+  });
+  const runs=EV.filter(e=>e.ty==='PUMP'&&/^OFF/.test(e.m)&&inR(e.t)).map(e=>{const m=e.m.match(/ran (\d+) s/);return{t:e.t,d:m?+m[1]:0,r:e.m.replace(/^OFF - /,'').replace(/\(ran.*$/,'')}});
+  setH('runs',runs.length?'<table><tr><th>'+tr('Stopped','നിർത്തിയത്')+'</th><th>'+tr('Duration','ദൈർഘ്യം')+'</th><th>'+tr('Reason','കാരണം')+'</th></tr>'+runs.slice(0,30).map(r=>'<tr><td>'+fmtT(r.t)+'</td><td><b>'+Math.floor(r.d/60)+'m '+r.d%60+'s</b></td><td>'+esc(r.r)+'</td></tr>').join('')+'</table>':'<div class="sm">'+tr('No pump runs in this period','ഈ കാലയളവിൽ പമ്പ് റൺ ഇല്ല')+'</div>');
+  const ev=EV.filter(e=>inR(e.t)).filter(e=>evFilter==='ALL'||(evFilter==='WIFI'?/wifi/i.test(e.m):(evFilter==='ANIMAL'?(e.ty==='ANIMAL'||e.ty==='DETER'):e.ty===evFilter)));
+  const COL={PUMP:'--bl',ANIMAL:'--am',FAULT:'--rd',OK:'--ok',RAIN:'--bl',DETER:'--am',LIGHT:'--am'};
+  setH('ev',ev.length?'<table>'+ev.slice(0,80).map(e=>'<tr><td style="white-space:nowrap">'+(e.t?fmtT(e.t):'--')+'</td><td><b style="color:var('+(COL[e.ty]||'--mu')+')">'+e.ty+'</b></td><td>'+esc(e.m)+'</td></tr>').join('')+'</table>':'<div class="sm">'+tr('No events','ഇവന്റുകളില്ല')+'</div>');
+}
+function pctOf0(r){return S?pctOf(r):0}
+function draw(cv,labs,vals,type,colVar,ymax){
+  if(!cv||!cv.clientWidth)return;
+  const cs=getComputedStyle(document.documentElement),col=cs.getPropertyValue(colVar).trim()||'#4ade80',mu=cs.getPropertyValue('--mu').trim(),bd=cs.getPropertyValue('--bd').trim();
+  const d=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;cv.width=w*d;cv.height=h*d;
+  const g=cv.getContext('2d');g.scale(d,d);g.font='10px system-ui';g.fillStyle=mu;
+  if(!vals.length){g.fillText(tr('No data for this period','ഈ കാലയളവിൽ ഡാറ്റ ഇല്ല'),10,h/2);return}
+  const L=30,B=18,T=8,R=6,pw=w-L-R,ph=h-T-B,mx=ymax||Math.max(1,...vals)*1.15,n=vals.length;
+  g.strokeStyle=bd;for(let i=0;i<=4;i++){const y=T+ph*i/4;g.beginPath();g.moveTo(L,y);g.lineTo(w-R,y);g.stroke();g.fillText(mx<6?(mx*(1-i/4)).toFixed(1):Math.round(mx*(1-i/4)),2,y+3)}
+  if(type==='bar'){const bw=pw/n;g.fillStyle=col;vals.forEach((v,i)=>{const bh=ph*v/mx;g.fillRect(L+i*bw+1,T+ph-bh,Math.max(1,bw-2),bh)})}
+  else{const x=i=>L+pw*(n===1?.5:i/(n-1)),y=v=>T+ph*(1-v/mx);g.strokeStyle=col;g.lineWidth=2;g.beginPath();vals.forEach((v,i)=>i?g.lineTo(x(i),y(v)):g.moveTo(x(i),y(v)));g.stroke();g.lineTo(x(n-1),T+ph);g.lineTo(x(0),T+ph);g.globalAlpha=.15;g.fillStyle=col;g.fill();g.globalAlpha=1}
+  g.fillStyle=mu;[0,Math.floor(n/2),n-1].forEach(i=>g.fillText(labs[i],clamp(L+pw*(n===1?.5:i/(n-1))-14,L,w-42),h-4));
+}
+
+/* ---------- export ---------- */
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type||'text/csv'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function exportCSV(k){
+  if(k==='events')download('events.csv','time,type,message\n'+EV.filter(e=>inR(e.t)).map(e=>new Date(e.t*1000).toISOString()+','+e.ty+',"'+e.m.replace(/"/g,'""')+'"').join('\n'));
+  else download('hourly.csv','time,soil_raw,soil_pct,pump_seconds,motion_events,rain_chance_pct,temp_c,rain_lock,fault\n'+H.filter(x=>inR(x.t)).map(x=>[new Date(x.t*1000).toISOString(),x.soil,Math.round(pctOf0(x.soil)),x.ps,x.an,x.rain,x.temp,x.fl&1,(x.fl>>1)&1].join(',')).join('\n'));
+}
+function makeReport(){
+  const h=H.filter(x=>inR(x.t)),pm=h.reduce((a,x)=>a+x.ps,0)/60,mo=h.reduce((a,x)=>a+x.an,0);
+  const rn=RANGES.find(r=>r[0]===range)[1];
+  $('printArea').innerHTML='<h1>'+esc(cfg.farm)+' – '+tr('Farm report','ഫാം റിപ്പോർട്ട്')+'</h1><p>'+rn+' · '+new Date().toLocaleString()+(isDemo()?' · <b>DEMO DATA</b>':'')+'</p><table><tr><td>Pump runtime</td><td>'+Math.round(pm)+' min</td></tr><tr><td>Estimated water used (estimate, no flow sensor)</td><td>~'+Math.round(pm*cfg.flow)+' L</td></tr><tr><td>Estimated water saved by rain-lock (estimate)</td><td>~'+(S?S.tot.saved:0)+' L</td></tr><tr><td>Motion events</td><td>'+mo+'</td></tr><tr><td>Rain-lock hours</td><td>'+h.filter(x=>x.fl&1).length+'</td></tr><tr><td>Fault hours</td><td>'+h.filter(x=>x.fl&2).length+'</td></tr><tr><td>Average soil moisture</td><td>'+(h.length?Math.round(h.reduce((a,x)=>a+pctOf0(x.soil),0)/h.length):'—')+' %</td></tr></table><h3>Events</h3><table>'+EV.filter(e=>inR(e.t)).slice(0,60).map(e=>'<tr><td>'+fmtT(e.t)+'</td><td>'+e.ty+'</td><td>'+esc(e.m)+'</td></tr>').join('')+'</table>';
+  setTimeout(()=>window.print(),150);
+}
+
+/* ---------- AI assistant ---------- */
+const SUGG=[['Soil moisture now?','ഇപ്പോൾ മണ്ണിലെ ഈർപ്പം എത്രയാണ്?'],['Why is the pump not running?','Pump എന്തുകൊണ്ടാണ് പ്രവർത്തിക്കാത്തത്?'],['What is Rain-Lock?','Rain-Lock എന്താണ്?'],['Pump runtime this week?','ഈ ആഴ്ച Pump എത്ര സമയം പ്രവർത്തിച്ചു?'],['Show today\'s irrigation history','ഇന്നത്തെ Irrigation History കാണിക്കൂ'],['What to do if soil moisture is very low?','Soil Moisture വളരെ കുറവാണെങ്കിൽ എന്ത് ചെയ്യണം?']];
+function addMsg(t,who){const c=$('chat');const d=document.createElement('div');d.className='msg '+who;d.textContent=t;c.appendChild(d);c.scrollTop=c.scrollHeight;return d}
+function localAnswer(q){
+  const s=q.toLowerCase(),M=/[\u0d00-\u0d7f]/.test(q)||ml(),T=(e,m)=>M?m:e;
+  if(!S)return T('No data yet – connecting to the farm node.','ഡാറ്റ ഇതുവരെ ലഭിച്ചിട്ടില്ല.');
+  const has=(...k)=>k.some(x=>s.includes(x));
+  const wk=H.slice(-168).reduce((a,x)=>a+x.ps,0)/60,td=H.filter(x=>inR(x.t)&&range==='today'||(new Date(x.t*1000).toDateString()===new Date().toDateString())).reduce((a,x)=>a+x.ps,0)/60;
+  if(has('rain','മഴ'))return T('Rain-Lock pauses AUTOMATIC irrigation when rain is expected (≥60% chance in the next 3 h, or raining now). It saves water. Now: '+(S.rainLock?'ACTIVE':'inactive')+(S.wx.ok?'; rain chance 3 h '+S.wx.c3+'%, 6 h '+S.wx.c6+'%.':'; weather data unavailable.'),'മഴ പ്രതീക്ഷിക്കുമ്പോൾ (അടുത്ത 3 മണിക്കൂറിൽ ≥60% സാധ്യത, അല്ലെങ്കിൽ ഇപ്പോൾ മഴ) ഓട്ടോമാറ്റിക് ജലസേചനം തടഞ്ഞ് വെള്ളം ലാഭിക്കുന്ന സംവിധാനമാണ് Rain-Lock. ഇപ്പോൾ: '+(S.rainLock?'സജീവം':'നിഷ്ക്രിയം')+(S.wx.ok?'; മഴ സാധ്യത 3മ '+S.wx.c3+'%, 6മ '+S.wx.c6+'%.':'; കാലാവസ്ഥ ഡാറ്റ ലഭ്യമല്ല.'));
+  if(has('why','not running','പ്രവർത്തിക്കാത്ത','എന്തുകൊണ്ട്'))return whyPump();
+  if(has('very low','what to do','എന്ത് ചെയ്യ','കുറവാണെങ്കിൽ'))return T('If moisture is very low: 1) check Faults – a sensor fault stops auto irrigation; 2) check Rain-Lock; 3) if safe, switch the pump ON manually (it auto-stops after 15 min); 4) check the soil probe and the pump/hose. Current: '+S.pct+'% ('+condTx('dry')+' above raw '+S.onRaw+').','ഈർപ്പം വളരെ കുറവാണെങ്കിൽ: 1) തകരാറുകൾ നോക്കുക – സെൻസർ തകരാർ ഓട്ടോ ജലസേചനം നിർത്തും; 2) Rain-Lock നോക്കുക; 3) സുരക്ഷിതമെങ്കിൽ പമ്പ് മാനുവലായി ഓണാക്കുക (15 മിനിറ്റിൽ സ്വയം നിൽക്കും); 4) സെൻസർ പ്രോബും പമ്പ്/പൈപ്പും പരിശോധിക്കുക. ഇപ്പോൾ: '+S.pct+'%.');
+  if(has('week','ആഴ്ച'))return T('Pump ran about '+Math.round(wk)+' min in the last 7 days (~'+Math.round(wk*cfg.flow)+' L estimated – no flow sensor).','കഴിഞ്ഞ 7 ദിവസം പമ്പ് ഏകദേശം '+Math.round(wk)+' മിനിറ്റ് പ്രവർത്തിച്ചു (~'+Math.round(wk*cfg.flow)+' L – കണക്കാക്കിയത്, ഫ്ലോ സെൻസർ ഇല്ല).');
+  if(has('history','ഹിസ്റ്ററി','ചരിത്ര'))return T('Today the pump ran about '+Math.round(td)+' min. Recent pump events:\n'+(EV.filter(e=>e.ty==='PUMP').slice(0,5).map(e=>fmtT(e.t)+' '+e.m).join('\n')||'none'),'ഇന്ന് പമ്പ് ഏകദേശം '+Math.round(td)+' മിനിറ്റ് പ്രവർത്തിച്ചു. സമീപകാല പമ്പ് ഇവന്റുകൾ:\n'+(EV.filter(e=>e.ty==='PUMP').slice(0,5).map(e=>fmtT(e.t)+' '+e.m).join('\n')||'ഇല്ല'));
+  if(has('moisture','soil','ഈർപ്പം','മണ്ണ്'))return T('Soil moisture is '+S.pct+'% ('+condTx(soilCond())+', raw '+S.soil+'). '+S.pred,'മണ്ണിലെ ഈർപ്പം '+S.pct+'% ആണ് ('+condTx(soilCond())+', raw '+S.soil+'). '+S.pred);
+  if(has('fault','തകരാർ'))return S.faults.length?S.faults.join('\n'):T('No active faults.','സജീവ തകരാറുകളില്ല.');
+  if(has('motion','pir','ചലന'))return T('PIR1: '+(S.m1?'motion':'none')+', PIR2: '+(S.m2?'motion':'none')+'. Last motion: '+S.lastAnimal+'. Today '+S.today.animals+' event(s).','PIR1: '+(S.m1?'ചലനം':'ഇല്ല')+', PIR2: '+(S.m2?'ചലനം':'ഇല്ല')+'. അവസാന ചലനം: '+S.lastAnimal+'. ഇന്ന് '+S.today.animals+' സംഭവം.');
+  if(has('water','വെള്ളം','ജല'))return T('Estimated water used: ~'+Math.round(S.tot.pumpMin*cfg.flow)+' L; estimated saved by rain-lock: ~'+S.tot.saved+' L (estimates only).','കണക്കാക്കിയ ജല ഉപയോഗം ~'+Math.round(S.tot.pumpMin*cfg.flow)+' L; മഴ-ലോക്ക് വഴി ലാഭം ~'+S.tot.saved+' L (കണക്കാക്കിയത് മാത്രം).');
+  return T('Status: '+S.status+'. Soil '+S.pct+'%, pump '+(S.pump?'ON':'OFF')+', rain-lock '+(S.rainLock?'active':'off')+'. Try one of the suggested questions.','നില: '+S.status+'. മണ്ണ് '+S.pct+'%, പമ്പ് '+(S.pump?'ON':'OFF')+', മഴ-ലോക്ക് '+(S.rainLock?'സജീവം':'ഇല്ല')+'. നിർദ്ദേശിച്ച ചോദ്യങ്ങളിലൊന്ന് പരീക്ഷിക്കൂ.');
+}
+async function ask(txt){
+  const q=(txt||$('aiIn').value).trim();if(!q)return;$('aiIn').value='';addMsg(q,'u');
+  const b=addMsg('…','a');
+  if(cfg.key&&navigator.onLine){
+    try{
+      const ctx=JSON.stringify({status:S,recentEvents:EV.slice(0,15),last24hSoil:H.slice(-24).map(x=>x.soil)});
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(cfg.model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':cfg.key},body:JSON.stringify({system_instruction:{parts:[{text:'You are the AgriNexus farm assistant for an ESP32 smart farm (soil moisture, pump, fan, lights, buzzer, 2 PIR motion sensors; no camera, no flow sensor). Answer briefly using ONLY the live data JSON. Water numbers are estimates. PIR detects motion, not animals. You cannot control devices. Reply in the user\'s language (Malayalam or English).'}]},contents:[{role:'user',parts:[{text:'LIVE DATA: '+ctx+'\n\nQUESTION: '+q}]}]})});
+      const j=await r.json();const a=j.candidates&&j.candidates[0]&&j.candidates[0].content.parts.map(p=>p.text).join('');
+      if(a){b.textContent=a;return}
+    }catch(e){}
+  }
+  b.textContent=localAnswer(q);
+}
+function initAI(){
+  setH('sugg',SUGG.map((s,i)=>'<button class="btn" style="font-size:12px;padding:7px 10px" onclick="ask(\''+s[ml()?1:0].replace(/'/g,"\\'")+'\')">'+s[ml()?1:0]+'</button>').join(''));
+  $('aiMode').textContent=cfg.key?tr('Mode: Gemini AI + live data (falls back to offline rules)','മോഡ്: Gemini AI + തത്സമയ ഡാറ്റ (പരാജയപ്പെട്ടാൽ ഓഫ്‌ലൈൻ നിയമങ്ങൾ)'):tr('Mode: built-in offline assistant using live data','മോഡ്: തത്സമയ ഡാറ്റ ഉപയോഗിക്കുന്ന ബിൽറ്റ്-ഇൻ ഓഫ്‌ലൈൻ അസിസ്റ്റന്റ്');
+  if(!$('chat').children.length)addMsg(tr('Hi! Ask me about soil moisture, the pump, rain-lock or history.','ഹായ്! മണ്ണിലെ ഈർപ്പം, പമ്പ്, മഴ-ലോക്ക്, ചരിത്രം എന്നിവയെക്കുറിച്ച് ചോദിക്കൂ.'),'a');
+}
+
+/* ---------- about content ---------- */
+function renderAbout(){
+  const hw=[['ESP32 Dev Module','1',tr('Main controller (Wi-Fi)','പ്രധാന കൺട്രോളർ (Wi-Fi)')],['Soil moisture sensor · GPIO34','1',tr('Soil moisture','മണ്ണിലെ ഈർപ്പം')],['PIR motion sensor · GPIO27, 13','2',tr('Motion detection','ചലനം തിരിച്ചറിയൽ')],['Water pump · GPIO26','1',tr('Irrigation','ജലസേചനം')],['Buzzer · GPIO25','1',tr('Alert / deterrent','അലർട്ട് / തുരത്തൽ')],['LED lights · GPIO14 (one relay)','2',tr('Insect attraction','പ്രാണികളെ ആകർഷിക്കൽ')],['DC fan · GPIO33','1',tr('Insect trap airflow','പ്രാണിക്കെണി വായുപ്രവാഹം')],['Relay modules','–',tr('Switch pump, fan, lights','പമ്പ്, ഫാൻ, ലൈറ്റ് സ്വിച്ച്')]];
+  setH('hw',hw.map(r=>'<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+r[2]+'</td></tr>').join(''));
+  const ex=[[tr('Automatic irrigation','ഓട്ടോമാറ്റിക് ജലസേചനം'),tr('Pump starts when raw soil value is above 2500 (dry) and stops below 1700 (wet). The gap is hysteresis – it prevents rapid ON/OFF. Safety timers protect the pump.','raw മൂല്യം 2500-ന് മുകളിൽ (ഉണക്കം) പമ്പ് ഓണാകും; 1700-ന് താഴെ (നനവ്) ഓഫാകും. ഇടയിലെ വ്യത്യാസം ഹിസ്റ്ററിസിസ് – പമ്പ് തുടരെ ഓൺ/ഓഫ് ആകുന്നത് തടയുന്നു. സുരക്ഷാ ടൈമറുകൾ പമ്പിനെ സംരക്ഷിക്കുന്നു.')],[tr('Rain-Lock','മഴ-ലോക്ക്'),tr('Uses WeatherAPI forecast. If rain chance in 3 h is ≥60%, automatic watering is paused and water is saved.','WeatherAPI പ്രവചനം ഉപയോഗിക്കുന്നു. 3 മണിക്കൂറിൽ മഴ സാധ്യത ≥60% ആയാൽ ഓട്ടോ നനയ്ക്കൽ നിർത്തി വെള്ളം ലാഭിക്കുന്നു.')],[tr('Security & deterrent','സുരക്ഷയും തുരത്തലും'),tr('Two PIR sensors detect motion; the buzzer plays different patterns and the system learns which pattern works best.','രണ്ട് PIR സെൻസറുകൾ ചലനം തിരിച്ചറിയുന്നു; ബസർ വിവിധ പാറ്റേണുകൾ മുഴക്കുന്നു, ഏതാണ് ഫലപ്രദമെന്ന് സിസ്റ്റം പഠിക്കുന്നു.')],[tr('Insect trap','പ്രാണിക്കെണി'),tr('Lights attract insects towards the fan, which traps them.','ലൈറ്റ് പ്രാണികളെ ആകർഷിക്കുന്നു; ഫാൻ അവയെ വലിച്ചെടുക്കുന്നു.')],[tr('Telegram + this app','Telegram + ഈ ആപ്പ്'),tr('Same ESP32 data on the web dashboard, Telegram bot and this app.','ഒരേ ESP32 ഡാറ്റ വെബ് ഡാഷ്ബോർഡ്, ടെലിഗ്രാം ബോട്ട്, ഈ ആപ്പ് എന്നിവയിൽ.')]];
+  setH('expl',ex.map(e=>'<details><summary>'+e[0]+'</summary><p>'+e[1]+'</p></details>').join(''));
+  setH('future','<ul style="margin:0;padding-left:20px;line-height:1.8">'+[tr('ESP32-CAM for live video & image recognition','ESP32-CAM: ലൈവ് വീഡിയോ, ചിത്ര തിരിച്ചറിയൽ'),tr('Water-flow sensor for measured (not estimated) usage','യഥാർത്ഥ ജല അളവിന് ഫ്ലോ സെൻസർ'),tr('Soil pH / NPK sensors','സോയിൽ pH / NPK സെൻസറുകൾ'),tr('Farm temperature & humidity sensor','ഫാമിലെ താപനില/ഈർപ്പ സെൻസർ'),tr('Solar power, LoRa, GPS','സോളാർ, LoRa, GPS'),tr('Secure cloud (Firebase) remote control & push notifications','സുരക്ഷിത ക്ലൗഡ് (Firebase) റിമോട്ട് നിയന്ത്രണം, പുഷ് നോട്ടിഫിക്കേഷൻ'),tr('Multi-farm dashboard, user roles','മൾട്ടി-ഫാം ഡാഷ്ബോർഡ്, ഉപയോക്തൃ റോളുകൾ')].map(x=>'<li>'+x+'</li>').join('')+'</ul>');
+}
+
+/* ---------- settings, i18n, nav ---------- */
+function i18n(){
+  document.documentElement.lang=cfg.lang;
+  document.querySelectorAll('[data-t]').forEach(e=>{const p=e.getAttribute('data-t').split('|');e.textContent=p[ml()?1:0]||p[0]});
+  $('aiIn').placeholder=tr('Ask in Malayalam or English…','മലയാളത്തിലോ ഇംഗ്ലീഷിലോ ചോദിക്കൂ…');
+  buildNav();initAI();renderAbout();buildSettings();renderAll();renderHist();
+}
+const NAV=[['home','🏠','Home','ഹോം'],['ctl','🎛','Control','നിയന്ത്രണം'],['irr','💧','Irrigation','ജലസേചനം'],['his','📈','History','ചരിത്രം'],['hl','🩺','Health','ആരോഗ്യം'],['more','☰','More','കൂടുതൽ']];
+function buildNav(){$('nav').innerHTML=NAV.map(n=>'<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')"><span>'+n[1]+'</span>'+tr(n[2],n[3])+'</button>').join('');markNav()}
+function markNav(){const sub={ai:'more',sec:'more',about:'more',set:'more'};document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===(sub[viewId]||viewId)))}
+function go(v){viewId=v;document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));markNav();scrollTo(0,0);if(v==='his'||v==='sec'||v==='hl'||v==='ai')loadHist(false);if(v==='his')renderHist();if(v==='set')$('demoCtl').style.display=isDemo()?'block':'none'}
+function chipSet(id,opts,cur,fn){setH(id,opts.map(o=>'<button class="'+(o[0]===cur?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')">'+o[1]+'</button>').join(''))}
+function buildSettings(){
+  chipSet('setLang',[['en','English'],['ml','മലയാളം']],cfg.lang,'setLang');
+  chipSet('setTheme',[['dark','🌙 Dark'],['light','☀ Light'],['green','🌿 Green']],cfg.theme,'setTheme');
+  chipSet('setMode',[['live',tr('Live (real ESP32)','ലൈവ് (യഥാർത്ഥ ESP32)')],['demo',tr('Demo data','ഡെമോ ഡാറ്റ')]],cfg.mode,'setModeFn');
+  $('setFarm').value=cfg.farm;$('setBase').value=cfg.base;$('setFlow').value=cfg.flow;$('setPin').value=cfg.pin;$('setKey').value=cfg.key;$('setModel').value=cfg.model;
+}
+function setLang(l){cfg.lang=l;LS.set('lang',l);i18n()}
+function setTheme(t){cfg.theme=t;LS.set('theme',t);document.documentElement.dataset.theme=t;document.querySelector('meta[name=theme-color]').content=t==='light'?'#eef3f1':'#0b1f14';buildSettings();renderHist()}
+function setModeFn(m){cfg.mode=m;LS.set('mode',m);applyMode();buildSettings()}
+function applyMode(){document.body.classList.toggle('isdemo',isDemo());S=null;H=[];EV=[];histAt=0;fails=0;online=false;lastOk=0;if(isDemo())demoReset();poll();loadHist(true);$('demoCtl').style.display=isDemo()?'block':'none'}
+function saveSet(){
+  cfg.farm=$('setFarm').value||'AgriNexus – Smart Farm';cfg.base=$('setBase').value.trim();cfg.flow=Math.max(.1,+$('setFlow').value||5);cfg.pin=$('setPin').value;cfg.key=$('setKey').value.trim();cfg.model=$('setModel').value.trim()||'gemini-2.5-flash';
+  ['farm','base','flow','pin','key','model'].forEach(k=>LS.set(k,cfg[k]));$('farmName').textContent=cfg.farm;applyMode();initAI();alert(tr('Saved','സേവ് ചെയ്തു'));
+}
+
+/* ---------- DEMO engine ---------- */
+let DM=null;
+function demoReset(){
+  const now=Math.floor(Date.now()/1000);
+  DM={t0:Date.now(),pump:false,manual:false,hold:0,fan:false,led:false,pir:true,alarm:true,soil:2150,rain:false,fault:false,m1:false,m2:false,mUntil:0,lastAnimal:'—',animalsToday:3,totAnimals:41,pumpToday:12,pumpTot:240,saved:150,pumpStart:0,reason:'Idle',queue:[],ev:[],hist:[]};
+  for(let i=719;i>=0;i--){const t=Math.floor((now-i*3600)/3600)*3600,hr=new Date(t*1000).getHours();const soil=Math.round(2050+650*Math.sin(i/9)+120*Math.sin(i/2.3));const wet=soil>2500;DM.hist.push({t,soil:clamp(soil,1400,3300),ps:wet&&i%9===0?300+(i%4)*60:(i%31===0?180:0),an:(hr>=19||hr<=5)&&i%3===0?1+i%3:0,rain:clamp(Math.round(35+30*Math.sin(i/17)+25*Math.sin(i/5)),0,100),temp:Math.round(28+4*Math.sin((hr-9)/24*6.28)),fl:(Math.sin(i/17)>.7?1:0)|(i===400||i===401?2:0)})}
+  const E=(ago,ty,m)=>DM.ev.push({t:now-ago,ty,m});
+  E(86400*20,'BOOT','System started, firmware v2.1');
+  for(let d=0;d<18;d++){const b=d*86400*1.6+3600*2;E(b+600,'PUMP','ON - Soil dry (soil 38%)');E(b,'PUMP','OFF - Soil wet enough (ran '+(240+d*17%200)+' s)')}
+  E(3600*30,'RAIN','Rain-lock ACTIVE - rain chance 72% in next 3 h');E(3600*28,'RAIN','Irrigation skipped - rain expected (water saved)');E(3600*24,'RAIN','Rain-lock released');
+  E(3600*50,'ANIMAL','Motion detected on PIR 1');E(3600*50-5,'DETER','Alarm started - pattern: Rapid pulses');E(3600*50-30,'DETER','Rapid pulses worked - animal left in 22 s');E(3600*9,'ANIMAL','Motion detected on PIR 2');E(3600*9-4,'DETER','Alarm started - pattern: Siren sweep');
+  E(3600*80,'FAULT','Soil sensor reading invalid');E(3600*79,'OK','Soil sensor recovered');E(3600*120,'INFO','WiFi restored after 42 s');E(3600*6,'LIGHT','Lights ON - Manual');E(3600*6-60,'FAN','Fan ON');
+  DM.ev.sort((a,b)=>b.t-a.t);DM.ev.reverse();
+}
+function demoTick(){
+  const d=DM;if(!d)return;const now=Date.now();
+  if(d.queue.length){d.queue=d.queue.filter(q=>{if(now<q.at)return true;q.fn();return false})}
+  const ws=d.rain,lock=d.rain;
+  if(d.pump){d.soil-=70;d.pumpToday+=0;if(d.soil<1700&&!d.manual){d.pump=false;d.reason='Soil wet enough';DM.ev.push({t:Math.floor(now/1000),ty:'PUMP',m:'OFF - Soil wet enough (ran '+Math.round((now-d.pumpStart)/1000)+' s)'})}}
+  else d.soil+=d.rain?4:9;
+  d.soil=clamp(d.soil,1400,3900);
+  if(!d.pump&&!d.manual&&!d.fault&&!lock&&d.soil>2500&&now>d.hold){d.pump=true;d.pumpStart=now;d.reason='Soil dry';DM.ev.push({t:Math.floor(now/1000),ty:'PUMP',m:'ON - Soil dry (soil '+Math.round(clamp((4092-d.soil)*100/2813,0,100))+'%)'})}
+  if(d.pump&&d.manual&&now-d.pumpStart>900000){d.pump=false;d.manual=false;d.reason='Manual safety cut-off'}
+  if(now>d.mUntil){d.m1=d.m2=false}
+  if(Math.random()<.012&&d.pir)demoEvt('motion');
+}
+function demoStatus(){
+  const d=DM,now=Date.now(),pct=Math.round(clamp((4092-d.soil)*100/(4092-1279),0,100)),faults=d.fault?['Soil sensor: reading invalid – automatic irrigation stopped']:[];
+  const rainNow=d.rain;
+  return{ts:new Date().toLocaleString(),up:Math.floor((now-d.t0)/1000)+86400*3+7200,heap:187000,rssi:-57,ip:'192.168.1.50 (demo)',status:faults.length?'Fault: '+faults[0]:d.pump?'Pumping - '+d.reason:d.rain?'Rain-lock active - irrigation paused':d.soil>2500?'Soil is dry':'System normal - soil moisture OK',fw:'2.1',ntp:true,tg:true,pump:d.pump,pumpMode:d.manual?'Manual':'Auto',pumpReason:d.reason,pumpRun:d.pump?Math.floor((now-d.pumpStart)/1000):0,soil:Math.round(d.soil),pct,onRaw:2500,offRaw:1700,dry:4092,wet:1279,fan:d.fan,led:d.led,pir:d.pir,alarm:d.alarm,buzzNow:d.m1||d.m2,m1:d.m1,m2:d.m2,lastAnimal:d.lastAnimal,rainLock:d.rain,pred:d.soil>2500?'Soil already dry – watering due now':'Next watering in about '+Math.max(1,Math.round((2500-d.soil)/9*2/60))+' h (estimate)',wx:{ok:true,rainNow:false,c3:d.rain?78:22,c6:d.rain?85:34,temp:29.5,hum:76,cond:d.rain?'Moderate rain':'Partly cloudy',age:420},faults,today:{pumpMin:d.pumpToday,animals:d.animalsToday},tot:{pumpMin:d.pumpTot,blocked:6,animals:d.totAnimals,faults:2,saved:d.saved},det:[{n:'Rapid pulses',tries:9,ok:6},{n:'Siren sweep',tries:7,ok:3},{n:'Long beeps',tries:5,ok:2},{n:'Double chirp',tries:4,ok:1}],best:0};
+}
+function demoEvt(k){
+  if(!DM)return;const now=Date.now();
+  if(k==='dry'){DM.soil=2700;DM.hold=0}
+  if(k==='rain'){DM.rain=!DM.rain;DM.ev.push({t:Math.floor(now/1000),ty:'RAIN',m:DM.rain?'Rain-lock ACTIVE - rain chance 78% in next 3 h':'Rain-lock released'})}
+  if(k==='motion'&&DM.pir){DM.m1=Math.random()<.6;DM.m2=!DM.m1;DM.mUntil=now+8000;DM.animalsToday++;DM.totAnimals++;DM.lastAnimal=new Date().toLocaleTimeString();DM.ev.push({t:Math.floor(now/1000),ty:'ANIMAL',m:'Motion detected on PIR '+(DM.m1?1:2)});DM.ev.push({t:Math.floor(now/1000),ty:'DETER',m:'Alarm started - pattern: Rapid pulses'})}
+  if(k==='fault'){DM.fault=!DM.fault;DM.ev.push({t:Math.floor(now/1000),ty:DM.fault?'FAULT':'OK',m:DM.fault?'Soil sensor reading invalid':'Soil sensor recovered'})}
+  if(k==='reset')demoReset();
+  poll();
+}
+async function demoApi(path){
+  if(!DM)demoReset();await new Promise(r=>setTimeout(r,120));
+  const json=o=>({ok:true,json:async()=>o,text:async()=>JSON.stringify(o)}),text=t=>({ok:true,text:async()=>t});
+  if(path.startsWith('/cmd')){
+    const c=new URLSearchParams(path.split('?')[1]).get('c');
+    DM.queue.push({at:Date.now()+900,fn:()=>{const n=Date.now();
+      if(c==='pumpon'){if(DM.rain&&false)return;if(!DM.fault){DM.manual=true;DM.pump=true;DM.pumpStart=n;DM.reason='Manual ON';DM.ev.push({t:Math.floor(n/1000),ty:'PUMP',m:'ON - Manual ON (soil '+Math.round(clamp((4092-DM.soil)*100/2813,0,100))+'%)'})}}
+      if(c==='pumpoff'){DM.manual=false;if(DM.pump){DM.pump=false;DM.ev.push({t:Math.floor(n/1000),ty:'PUMP',m:'OFF - Manual OFF (ran '+Math.round((n-DM.pumpStart)/1000)+' s)'})}DM.reason='Manual OFF';DM.hold=n+600000}
+      if(c==='fanon'||c==='fanoff'){DM.fan=c==='fanon';DM.ev.push({t:Math.floor(n/1000),ty:'FAN',m:DM.fan?'Fan ON':'Fan OFF'})}
+      if(c==='ledon'||c==='ledoff'){DM.led=c==='ledon';DM.ev.push({t:Math.floor(n/1000),ty:'LIGHT',m:(DM.led?'Lights ON':'Lights OFF')+' - Manual'})}
+      if(c==='buzzeron'||c==='buzzeroff'){DM.alarm=c==='buzzeron'}
+      if(c==='piron'||c==='piroff'){DM.pir=c==='piron'}
+      if(c==='clear'){DM.fault=false}
+    }});
+    return json(demoStatus());
+  }
+  if(path.startsWith('/api/status'))return json(demoStatus());
+  if(path.startsWith('/api/hist'))return text(DM.hist.map(x=>[x.t,x.soil,x.ps,x.an,x.rain,x.temp,x.fl].join(',')).join('\n'));
+  if(path.startsWith('/api/events'))return text(DM.ev.map(e=>e.t+','+e.ty+','+e.m).join('\n'));
+  throw new Error('404');
+}
+
+/* ---------- boot ---------- */
+document.documentElement.dataset.theme=cfg.theme;
+$('farmName').textContent=cfg.farm;
+document.body.classList.toggle('isdemo',isDemo());
+if(isDemo())demoReset();
+$('dateRow').style.display='none';
+i18n();
+if(location.hostname==='localhost'&&!cfg.base){setTimeout(()=>{const ip=prompt(tr('Enter the ESP32 IP address (shown in Serial Monitor), e.g. 192.168.1.50','ESP32-ന്റെ IP വിലാസം നൽകുക (Serial Monitor-ൽ കാണാം), ഉദാ: 192.168.1.50'));if(ip){cfg.base=ip.trim();LS.set('base',cfg.base);cfg.mode='live';LS.set('mode','live');applyMode();buildSettings()}else{setModeFn('demo')}},2200)}
+poll();loadHist(true);
+setInterval(()=>{if(isDemo())demoTick();poll()},2000);
+setInterval(()=>loadHist(true),60000);
+addEventListener('resize',()=>{if(viewId==='his')renderHist()});
+setTimeout(()=>$('splash').classList.add('hide'),1600);
+</script>
+</body>
+</html>
